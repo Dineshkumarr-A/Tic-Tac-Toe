@@ -1,7 +1,7 @@
 package Model;
 
 public enum GameState {
-    INPROGRESS,
+    IN_PROGRESS,
     WIN,
     DRAW
 }
