@@ -1,7 +1,9 @@
 package Strategy;
 
 import Model.Board;
+import Model.Move;
 
 public interface WinningStrategy {
-    void checkWinner(Board board);
+    boolean checkWinner(Board board, Move move);
+    void handleMove(Board board, Move move);
 }

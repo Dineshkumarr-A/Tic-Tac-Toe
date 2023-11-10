@@ -38,7 +38,7 @@ public class Board {
 
     public Cell GetCell(int row, int col)
     {
-        return  this.board.get(row).get(col);
+        return this.board.get(row).get(col);
     }
 
     public void printBoard()
@@ -49,6 +49,7 @@ public class Board {
             {
                 cell.display();
             }
+            System.out.println();
         }
     }
 }

@@ -30,6 +30,7 @@ public class Game {
         this.winningStrategiesList = builder.winningStrategies;
         this.nextMovePlayerIndex = 0;
         this.gameState = GameState.IN_PROGRESS;
+        this.board = new Board(builder.dimensions);
         this.moves = new ArrayList<>();
     }
 
@@ -124,11 +125,29 @@ public class Game {
         board.printBoard();
     }
 
+    private boolean validateMove(int row, int col)
+    {
+
+        if(row >= board.getSize() || col >= board.getSize())
+            return false;
+        else return board.getBoard().get(row).get(col).getCellState().equals(CellState.EMPTY);
+    }
+
+    private boolean checkWinner(Move move)
+    {
+        for(WinningStrategy winningStrategy: winningStrategiesList)
+        {
+            if(winningStrategy.checkWinner(board,move))
+                return true;
+        }
+        return false;
+    }
+
     public void makeMove()
     {
         Player currentMoveplayer = players.get(nextMovePlayerIndex);
         System.out.println("It is " + currentMoveplayer.getName() + "'s move. Please make move.");
-        Move currentmove = currentMoveplayer.makeMove();
+        Move currentmove = currentMoveplayer.makeMove(board);
 
         int row = currentmove.getCell().getRow();
         int col = currentmove.getCell().getCol();
@@ -136,13 +155,46 @@ public class Game {
         System.out.println("The player " + currentMoveplayer.getName() + " has made the move. The row is " + row
         + " and the col is " + col);
 
-        // validation if needed
+        if(!validateMove(row,col))
+        {
+            System.out.println("Invalid move. Please try again");
+            return;
+        }
 
-        Cell cellToChange = board.GetCell(row,col);
+        Cell cellToChange = board.getBoard().get(row).get(col);
         cellToChange.setCellState(CellState.FILLED);
         cellToChange.setPlayer(currentMoveplayer);
 
         Move finalMove = new Move(cellToChange, currentMoveplayer);
         moves.add(finalMove);
+
+        //Set next player index
+        nextMovePlayerIndex++;
+        nextMovePlayerIndex %= players.size();
+
+        if(checkWinner(currentmove))
+        {
+            gameState = GameState.WIN;
+            winner = currentMoveplayer;
+        }
+        else if(moves.size() == board.getSize() * board.getSize())
+        {
+            gameState = GameState.DRAW;
+        }
     }
+
+    public void undo()
+    {
+        if(moves.size() == 0)
+        {
+            System.out.println("No move to undo");
+            return;
+        }
+
+        Move lastMove = moves.get(moves.size()-1);
+        moves.remove(lastMove);
+
+        //Cell cell = lastMove.
+    }
+
 }
